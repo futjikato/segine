@@ -2,6 +2,7 @@ package de.futjikato.segine.map;
 
 import de.futjikato.segine.SegineException;
 import de.futjikato.segine.TextureManager;
+import de.futjikato.segine.rendering.Renderable;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -11,7 +12,7 @@ import org.newdawn.slick.SlickException;
  * @todo Documentation
  * @category de.futjikato.segine.map
  */
-public class MapPixel {
+public class MapPixel implements Renderable {
 
     private int x;
     private int y;
@@ -41,7 +42,7 @@ public class MapPixel {
         return this;
     }
 
-    public Image getTexture() {
+    public Image getImage() {
         if(texture == null) {
             try {
                 texture = TextureManager.getInstance().getByColorKey(color.getRed(), color.getGreen(), color.getBlue());

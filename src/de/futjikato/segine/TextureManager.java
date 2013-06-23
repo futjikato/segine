@@ -1,6 +1,7 @@
 package de.futjikato.segine;
 
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
 import java.util.TreeMap;
 
@@ -14,6 +15,8 @@ public class TextureManager {
     private static TextureManager instance;
 
     private Image[][][] colorKeyMap = new Image[256][256][256];
+
+    private String[][][] colorKeyNameMap = new String[256][256][256];
 
     private TextureManager() {
 
@@ -32,16 +35,24 @@ public class TextureManager {
         return instance;
     }
 
-    public void setColorKey(int r, int g, int b, Image texture) throws SegineException {
+    public void setColorKey(int r, int g, int b, String filename) throws SegineException {
         if(validateRgbValue(r, g, b))
             throw new SegineException("RGB value out of valid range.");
 
-        colorKeyMap[r][g][b] = texture;
+        colorKeyNameMap[r][g][b] = filename;
     }
 
     public Image getByColorKey(int r, int g, int b) throws SegineException {
         if(validateRgbValue(r, g, b))
             throw new SegineException("RGB value out of valid range.");
+
+        try {
+            if(colorKeyMap[r][g][b] == null && colorKeyNameMap[r][g][b] != null) {
+                colorKeyMap[r][g][b] = new Image(colorKeyNameMap[r][g][b]);
+            }
+        } catch(SlickException e) {
+            throw new SegineException(e);
+        }
 
         return colorKeyMap[r][g][b];
     }
