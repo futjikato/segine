@@ -35,8 +35,6 @@ public class Renderer {
     private Viewport vp;
 
     public Renderer() throws SegineException {
-        createWindow(700, 700, "Segine");
-        initOpenGL();
         vp = new Viewport();
     }
 
@@ -85,6 +83,8 @@ public class Renderer {
     }
 
     public void start(Runnable preRender, Runnable postRender) throws SegineException {
+        createWindow(700, 700, "Segine");
+        initOpenGL();
 
         // init all container
         for(RenderContainer container : renderContainer) {
@@ -110,13 +110,7 @@ public class Renderer {
                 }
             }
 
-            /* ++++++++++++++++++++++ */
-            try {
-                new Image("game/ground/grass02.png").draw(0, 0, 50, 50);
-            } catch (SlickException e) {
-                throw new SegineException(e);
-            }
-            /* ++++++++++++++++++++++ */
+            Display.update();
 
             // notify frameCounter if one exists
             if(frameCounter != null) {
@@ -127,8 +121,6 @@ public class Renderer {
             if(postRender != null) {
                 postRender.run();
             }
-
-            Display.update();
 
             if(Display.isCloseRequested()) {
                 rendering = false;

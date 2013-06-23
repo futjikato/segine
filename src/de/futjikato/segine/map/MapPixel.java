@@ -16,7 +16,7 @@ public class MapPixel implements Renderable {
 
     private int x;
     private int y;
-    private Color color;
+    private int[] color;
     private Image texture;
 
     public int getX() {
@@ -37,7 +37,7 @@ public class MapPixel implements Renderable {
         return this;
     }
 
-    public MapPixel setColor(Color color) {
+    public MapPixel setColor(int[] color) {
         this.color = color;
         return this;
     }
@@ -45,7 +45,7 @@ public class MapPixel implements Renderable {
     public Image getImage() {
         if(texture == null) {
             try {
-                texture = TextureManager.getInstance().getByColorKey(color.getRed(), color.getGreen(), color.getBlue());
+                texture = TextureManager.getInstance().getByColorKey(color[0], color[1], color[2]);
             } catch (SegineException e) {
                 return null;
             }

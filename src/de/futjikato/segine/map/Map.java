@@ -4,10 +4,15 @@ import de.futjikato.segine.SegineException;
 import de.futjikato.segine.rendering.RenderContainer;
 import de.futjikato.segine.rendering.Renderable;
 import de.futjikato.segine.rendering.Viewport;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -84,27 +89,28 @@ public class Map implements RenderContainer {
     @Override
     public void init() throws SegineException {
         try {
-            // load image map
-            imageMap = new Image(mapFile);
+            // read rgb values from buffered image
+            BufferedImage img = ImageIO.read(new File(mapFile));
 
-            // extract graphic object
-            mapGraphic = imageMap.getGraphics();
-        } catch (SlickException e) {
-            throw new SegineException(e);
-        }
+            // initialize storage
+            storage = new MapPixel[img.getHeight()][img.getWidth()];
 
-        // build basic storage array
-        width = imageMap.getWidth();
-        height = imageMap.getHeight();
-        storage = new MapPixel[width][height];
+            for(int x = 0 ; x < img.getWidth() ; x++) {
+                for(int y = 0 ; y < img.getHeight() ; y++) {
+                    int argb = img.getRGB(x, y);
 
-        for(int x = 0 ; x < width ; x++) {
-            for(int y = 0 ; y < height ; y++) {
-                MapPixel pixel = new MapPixel();
-                pixel.setX(x).setY(y).setColor(mapGraphic.getPixel(x, y));
+                    int rgb[] = new int[] {
+                        (argb >> 16) & 0xff, //red
+                        (argb >>  8) & 0xff, //green
+                        (argb      ) & 0xff  //blue
+                    };
 
-                insert(pixel, false);
+                    MapPixel mp = new MapPixel().setY(y).setX(x).setColor(rgb);
+                    storage[x][y] = mp;
+                }
             }
+        } catch (IOException e) {
+            throw new SegineException(e);
         }
     }
 
