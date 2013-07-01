@@ -34,8 +34,12 @@ public class Renderer {
 
     private Viewport vp;
 
-    public Renderer() throws SegineException {
-        vp = new Viewport();
+    private int syncFps = 60;
+
+    private boolean useSyncFps = true;
+
+    public Renderer(Viewport vp) throws SegineException {
+        this.vp = vp;
     }
 
     private void initOpenGL() {
@@ -52,16 +56,6 @@ public class Renderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         GL11.glLoadIdentity();
-    }
-
-    private void createWindow(int width, int height, String title) throws SegineException {
-        try {
-            Display.setDisplayMode(new DisplayMode(width, height));
-            Display.setTitle(title);
-            Display.create();
-        } catch (LWJGLException e) {
-            throw new SegineException(e);
-        }
     }
 
     private void log(String message, DebugOption level) throws SegineException {
@@ -83,7 +77,6 @@ public class Renderer {
     }
 
     public void start(Runnable preRender, Runnable postRender) throws SegineException {
-        createWindow(700, 700, "Segine");
         initOpenGL();
 
         // init all container
@@ -98,19 +91,29 @@ public class Renderer {
                 preRender.run();
             }
 
+            // clear
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            GL11.glLoadIdentity();
+
             // render all container
             for(RenderContainer container : renderContainer) {
                 List<Renderable> renderItem = container.filter(vp);
 
                 for(Renderable renderable : renderItem) {
                     Image img = renderable.getImage();
-                    if(img != null) {
-                        img.draw(renderable.getX() * 50, renderable.getY() * 50, 50, 50);
+                    Dimension dim = renderable.getDimension();
+                    if(img != null && dim != null) {
+                        Dimension renderDim = vp.translateDimension(dim);
+                        img.draw(renderDim.getX(), renderDim.getY(), renderDim.getWidth(), renderDim.getHeight());
                     }
                 }
             }
 
             Display.update();
+
+            if(useSyncFps) {
+                Display.sync(syncFps);
+            }
 
             // notify frameCounter if one exists
             if(frameCounter != null) {
@@ -125,10 +128,15 @@ public class Renderer {
             if(Display.isCloseRequested()) {
                 rendering = false;
             }
+
+            // if screen was resized update dimension ratio
+            if(Display.wasResized()) {
+                vp.updateScreenRatio();
+            }
         }
 
         // remove window on close
-        Display.destroy();
+        vp.close();
     }
 
     public void setFrameCounter(FrameCounter frameCounter) {
@@ -141,5 +149,13 @@ public class Renderer {
 
     public void end() {
         rendering = false;
+    }
+
+    public void setSyncFps(int fps) {
+        syncFps = fps;
+    }
+
+    public void useSyncFps(boolean flag) {
+        useSyncFps = flag;
     }
 }

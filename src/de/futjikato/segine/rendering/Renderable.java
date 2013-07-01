@@ -17,4 +17,5 @@ public interface Renderable {
 
     public int getY();
 
+    public Dimension getDimension();
 }

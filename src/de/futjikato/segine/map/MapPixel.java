@@ -2,6 +2,7 @@ package de.futjikato.segine.map;
 
 import de.futjikato.segine.SegineException;
 import de.futjikato.segine.TextureManager;
+import de.futjikato.segine.rendering.Dimension;
 import de.futjikato.segine.rendering.Renderable;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -25,6 +26,11 @@ public class MapPixel implements Renderable {
 
     public int getY() {
         return y;
+    }
+
+    @Override
+    public Dimension getDimension() {
+        return new Dimension(x, y, 1, 1);
     }
 
     public MapPixel setX(int x) {
@@ -52,9 +58,5 @@ public class MapPixel implements Renderable {
         }
 
         return texture;
-    }
-
-    public int getBlocksize() {
-        return 25;
     }
 }

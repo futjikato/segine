@@ -1,0 +1,42 @@
+package de.futjikato.segine.rendering;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: Moritz
+ * Date: 01.07.13
+ * Time: 22:20
+ * To change this template use File | Settings | File Templates.
+ */
+public class Dimension {
+
+    private float x;
+
+    private float y;
+
+    private float width;
+
+    private float height;
+
+    public Dimension(float x, float y, float width, float height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+}
