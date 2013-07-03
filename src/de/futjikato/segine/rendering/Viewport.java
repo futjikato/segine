@@ -5,13 +5,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Moritz
- * Date: 23.06.13
- * Time: 12:34
- * To change this template use File | Settings | File Templates.
- */
+
 public class Viewport {
 
     private float x;
@@ -30,7 +24,9 @@ public class Viewport {
 
     private float heightRatio;
 
-    private float blocksize;
+    private float blockWidth;
+
+    private float blockHeight;
 
     private int internalBlocksize;
 
@@ -45,7 +41,9 @@ public class Viewport {
 
         widthRatio = (float)screenWidth / vpWidth;
         heightRatio = (float)screenHeight / vpHeight;
-        this.blocksize = (float)blocksize * widthRatio;
+
+        this.blockWidth = (float)blocksize * widthRatio;
+        this.blockHeight = (float)blocksize * heightRatio;
     }
 
     public void createWindow(String title) throws SegineException {
@@ -57,7 +55,6 @@ public class Viewport {
         try {
             Display.setDisplayMode(new DisplayMode(screenWidth, screenHeight));
             Display.setTitle(title);
-            Display.setResizable(true);
             Display.create();
         } catch (LWJGLException e) {
             throw new SegineException(e);
@@ -73,8 +70,8 @@ public class Viewport {
     }
 
     public Dimension translateDimension(Dimension dim) {
-        float rx = (dim.getX() * blocksize) - x;
-        float ry = (dim.getY() * blocksize) - y;
+        float rx = (dim.getX() * blockWidth) - x;
+        float ry = (dim.getY() * blockHeight) - y;
         return new Dimension(rx, ry, dim.getWidth() * widthRatio, dim.getHeight() * heightRatio);
     }
 
@@ -94,6 +91,7 @@ public class Viewport {
         widthRatio = (float)screenWidth / vpWidth;
         heightRatio = (float)screenHeight / vpHeight;
 
-        this.blocksize = (float)internalBlocksize * widthRatio;
+        this.blockWidth = (float)internalBlocksize * widthRatio;
+        this.blockHeight = (float)internalBlocksize * heightRatio;
     }
 }

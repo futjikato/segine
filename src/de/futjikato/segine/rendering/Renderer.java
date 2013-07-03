@@ -22,8 +22,6 @@ import java.util.List;
  */
 public class Renderer {
 
-    private Runnable renderCallback;
-
     private boolean rendering = false;
 
     private FrameCounter frameCounter;
@@ -56,16 +54,6 @@ public class Renderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         GL11.glLoadIdentity();
-    }
-
-    private void log(String message, DebugOption level) throws SegineException {
-        if(level.equals(DebugOption.NONE))
-            throw new SegineException("You cannot log messages on level NONE.");
-
-        if(level.compareTo(debug) >= 0) {
-            // TODO implement logger class abstraction stuff
-            System.out.println(String.format("%s%s", level.getLogPrefix(), message));
-        }
     }
 
     public void addRenderContainer(RenderContainer container) {
@@ -131,7 +119,10 @@ public class Renderer {
 
             // if screen was resized update dimension ratio
             if(Display.wasResized()) {
+                // update viewport render ratio
                 vp.updateScreenRatio();
+                // set new canvas size within openGL context
+                GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
             }
         }
 

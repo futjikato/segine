@@ -39,4 +39,8 @@ public class Dimension {
     public float getHeight() {
         return height;
     }
+
+    public String toString() {
+        return String.format("[Dimension X(%f) Y(%f) Width(%f) Height(%f)]", x, y, width, height);
+    }
 }
