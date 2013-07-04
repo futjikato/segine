@@ -69,51 +69,10 @@ public class Viewport {
         return x;
     }
 
-    public float getBlockHeight() {
-        return blockHeight;
-    }
-
-    public float getBlockWidth() {
-        return blockWidth;
-    }
-
-    public int getScreenHeight() {
-        return screenHeight;
-    }
-
-    public int getScreenWidth() {
-        return screenWidth;
-    }
-
-    public int getVpWidth() {
-        return vpWidth;
-    }
-
-    public int getVpHeight() {
-        return vpHeight;
-    }
-
     public Dimension translateDimension(Dimension dim) {
-        float rx = dim.getX();
-        float ry = dim.getY();
-        float rw = dim.getWidth();
-        float rh = dim.getHeight();
-
-        // translate position if needed
-        if(!dim.isAbolutePosition()) {
-            rx = rx * blockWidth;
-            ry = ry * blockHeight;
-        }
-        rx -= x;
-        ry -= y;
-
-        // translate size if needed
-        if(!dim.isAbsoluteSize()) {
-            rw = rw * widthRatio;
-            rh = rh * heightRatio;
-        }
-
-        return new Dimension(rx, ry, rw, rh);
+        float rx = (dim.getX() * blockWidth) - x;
+        float ry = (dim.getY() * blockHeight) - y;
+        return new Dimension(rx, ry, dim.getWidth() * widthRatio, dim.getHeight() * heightRatio);
     }
 
     public void move(float x, float y) {

@@ -2,11 +2,9 @@ package de.futjikato.segine.rendering;
 
 import de.futjikato.segine.SegineException;
 import de.futjikato.segine.TextureManager;
-import de.futjikato.segine.game.camera.Camera;
 import de.futjikato.segine.map.Map;
 import de.futjikato.segine.map.MapPixel;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -17,13 +15,12 @@ import org.newdawn.slick.SlickException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 
 /**
  * @author moritzspindelhirn
  * @category de.futjikato.segine.rendering
  */
-public class Renderer extends Observable {
+public class Renderer {
 
     private boolean rendering = false;
 
@@ -39,16 +36,8 @@ public class Renderer extends Observable {
 
     private boolean useSyncFps = true;
 
-    private Camera camera;
-
-    private long lastFrame;
-
     public Renderer(Viewport vp) throws SegineException {
         this.vp = vp;
-    }
-
-    private long getTime() {
-        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
 
     private void initOpenGL() {
@@ -68,14 +57,6 @@ public class Renderer extends Observable {
     }
 
     public void addRenderContainer(RenderContainer container) {
-        int index = 0;
-        for(RenderContainer listElement : renderContainer) {
-            if(listElement.getRenderOrder() > container.getRenderOrder()) {
-                renderContainer.add(index, container);
-                return;
-            }
-            index++;
-        }
         renderContainer.add(container);
     }
 
@@ -92,25 +73,10 @@ public class Renderer extends Observable {
         }
 
         rendering = true;
-        lastFrame = getTime();
         while(rendering) {
             // call pre render callback
             if(preRender != null) {
                 preRender.run();
-            }
-
-            // calculate delta from last frame
-            long newFrame = getTime();
-            long delta = newFrame - lastFrame;
-            lastFrame = newFrame;
-
-            // notify observers about upcoming new frame
-            setChanged();
-            notifyObservers(delta);
-
-            // call camera to adjust viewport to render
-            if(camera != null) {
-                camera.frame(delta);
             }
 
             // clear
@@ -125,8 +91,8 @@ public class Renderer extends Observable {
                     Image img = renderable.getImage();
                     Dimension dim = renderable.getDimension();
                     if(img != null && dim != null) {
-                        dim = vp.translateDimension(dim);
-                        img.draw(dim.getX(), dim.getY(), dim.getWidth(), dim.getHeight());
+                        Dimension renderDim = vp.translateDimension(dim);
+                        img.draw(renderDim.getX(), renderDim.getY(), renderDim.getWidth(), renderDim.getHeight());
                     }
                 }
             }
@@ -160,7 +126,7 @@ public class Renderer extends Observable {
             }
         }
 
-        // close window
+        // remove window on close
         vp.close();
     }
 
@@ -182,13 +148,5 @@ public class Renderer extends Observable {
 
     public void useSyncFps(boolean flag) {
         useSyncFps = flag;
-    }
-
-    public Camera getCamera() {
-        return camera;
-    }
-
-    public void setCamera(Camera camera) {
-        this.camera = camera;
     }
 }

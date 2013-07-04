@@ -17,6 +17,4 @@ public interface RenderContainer {
     public void init() throws SegineException;
 
     public List<Renderable> filter(Viewport viewport);
-
-    public int getRenderOrder();
 }

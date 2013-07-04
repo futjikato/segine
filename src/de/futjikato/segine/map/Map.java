@@ -127,9 +127,4 @@ public class Map implements RenderContainer {
 
         return blocksInViewport;
     }
-
-    @Override
-    public int getRenderOrder() {
-        return 0;
-    }
 }
